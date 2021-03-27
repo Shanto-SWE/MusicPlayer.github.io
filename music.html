@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Store</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+</head>
+<body>
+    <div class="main_div">
+        <div class="music_container">
+            <h2 id="title">Everything is one line</h2>
+            <h3 id="artis">Ironkee</h3>
+     
+        <div class="img_container">
+            <img src="Background/pic1.jpg" alt="">
+        </div>
+       <audio src="music/music1.mp3 "></audio>
+        <!----progress bar-->
+         <div class="progressbar_container" id="progress_container">
+
+            <div class="progress_duration_meter">
+                <div id="current_time">0:00</div>
+                <div id="duration">3:12</div>
+            </div>
+            <div class="progress_div" id="progress_div">
+                <div class="progress" id="progress"></div>
+            </div>
+         </div>
+
+        
+        <!----Music controls--->
+        <div class="music_controls">
+            <i class="fas fa-backward" title="previous" id="pre"></i>
+            <i class="fas fa-play main_button" title="play" id="play"></i>
+            <i class="fas fa-forward" title="next" id="next"></i>
+
+        </div>
+    </div>
+    </div>
+    <script>
+    const music=document.querySelector("audio");
+    const img=document.querySelector("img");
+    const play=document.getElementById('play');
+    const title=document.getElementById("title");
+    const arits=document.getElementById("artis");
+    const previous=document.getElementById("pre");
+    const next=document.getElementById("next");
+    let progress=document.getElementById("progress");
+    let current_time=document.getElementById("current_time");
+    let total_duration=document.getElementById("duration");
+    const progress_div=document.getElementById("progress_div");
+    
+    const songs=[{
+        name:"music1",
+        title:"everyone is one line",
+        artis:"Ironkee",
+        img:"pic1"
+    },
+    {
+        name:"music2",
+        title:"eBesharam Bewafa",
+        artis:"B praak",
+        img:"pic2"
+    },
+    {
+        name:"music3",
+        title:"burj khalifa",
+        artis:"shahi-GJ khushi",
+        img:"pic3"
+    },
+    {
+        name:"music4",
+        title:"nach meri laila",
+        artis:"Tony kakkar",
+        img:"pic4"
+    },
+    {
+        name:"music5",
+        title:"Genda phool",
+        artis:"Badsha",
+        img:"pic5"
+    },
+    {
+        name:"music6",
+        title:"nach meri rani",
+        artis:"Guru randhawa",
+        img:"pic6"
+    },
+    {
+        name:"music7",
+        title:"teri bhabhi",
+        artis:"Javed - Mohsin",
+        img:"pic7"
+    }
+
+    ]
+    let isplaying=true;
+    //play function
+    const playmusic=()=>{
+          isplaying=true;
+          music.play(); 
+          play.classList.replace("fa-play","fa-pause")
+          img.classList.add("anime");
+         
+
+    };
+    //pause function
+    const pausemusic=()=>{
+          isplaying=false;
+          music.pause(); 
+          play.classList.replace("fa-pause","fa-play")
+          img.classList.remove("anime");
+         
+
+    };
+    
+   play.addEventListener("click",()=>{
+       if(isplaying)
+       {
+        pausemusic();
+           
+       }
+       else
+       {
+        playmusic();
+         
+       }
+         
+   });
+
+
+   //changeing the song data
+   const loadsong=(songs)=>{
+
+    title.textContent=songs.title;
+    artis.textContent=songs.artis;
+    music.src="music/"+songs.name +".mp3";
+    img.src="Background/" +songs.img +".jpg";
+   }
+
+
+songsIndex=0;
+   const nextsong=()=>{
+       songsIndex=(songsIndex+1)% songs.length;
+
+    loadsong(songs[songsIndex]);
+    playmusic();
+   }
+   const presong=()=>{
+       songsIndex=(songsIndex-1+songs.length)%songs.length;
+
+    loadsong(songs[songsIndex]);
+    playmusic();
+   }
+   
+
+//progress js work
+music.addEventListener("timeupdate",(event)=>{
+
+const{currentTime,duration}=event.srcElement;
+let progress_time=(currentTime/duration)*100;
+progress.style.width=`${progress_time}%`;
+//music duration update
+let min_duration=Math.floor(duration/60);
+let sec_duration=Math.floor( duration%60);
+
+let tot_duration=`${min_duration}:${sec_duration}`;
+if(duration){
+total_duration.textContent=`${tot_duration}`;
+}
+//current duration update
+let min_currentTime=Math.floor(currentTime/60);
+let sec_currentTime=Math.floor( currentTime%60);
+
+if(sec_currentTime<10){
+     sec_currentTime=`0${sec_currentTime}`;
+}
+
+let tot_currentTime=`${min_currentTime}:${sec_currentTime}`;
+current_time.textContent=`${tot_currentTime}`;
+});
+
+
+//progress bar on click
+
+progress_div.addEventListener('click',(event)=>{
+   const{duration}=music;
+   let move_progress= (event.offsetX / event.srcElement.clientWidth)*duration;
+  music.currentTime=move_progress;
+  
+});
+//if music is end then call next song fun
+
+music.addEventListener('ended',nextsong);
+
+   next.addEventListener('click',nextsong);
+   pre.addEventListener('click',presong);
+    </script>
+</body>
+</html>
